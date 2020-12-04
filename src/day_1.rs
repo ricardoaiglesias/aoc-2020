@@ -1,67 +1,76 @@
 use std::fs::File;
+use std::collections::HashMap;
 use std::io::{BufRead, BufReader};
 
-struct PasswordEntry {
-    min_num : usize,
-    max_num : usize,
-    letter : char,
-    password : String
-}
 
-fn file_to_text(path : String) -> Vec<PasswordEntry> {
-    let mut result : Vec<PasswordEntry> = Vec::new();
+fn file_to_vec(filepath : &str) -> Vec<i32>
+{
+    let mut result : Vec<i32> = Vec::new();
 
-    let reader = BufReader::new(File::open(path).unwrap());
-    for line_ in reader.lines() {
-        let line = line_.unwrap().to_string();
+    let file = File::open(filepath.to_owned()).unwrap();
+    let reader = BufReader::new(file);
 
-        let index_1 = line.find('-').unwrap();
-        let index_2 = line.find(' ').unwrap();
-        let index_3 = line.find(':').unwrap();
-
-        let min_str = &line[0..index_1];
-        let max_str = &line[index_1+1..index_2];
-        let char_str = &line[index_2+1 .. index_3];
-
-        let password = &line[index_3 + 1..].trim();
-
-        let pword_entry = PasswordEntry {
-            min_num : min_str.parse().unwrap(),
-            max_num : max_str.parse().unwrap(),
-            letter : char_str.chars().next().unwrap(),
-            password : password.to_string()
-        };
-
-        result.push(pword_entry);
+    for line in reader.lines() {
+        let num_str = line.unwrap().to_string();
+        result.push(num_str.parse().unwrap());
     }
 
     result
 }
 
-fn is_valid_password_1(info : &PasswordEntry) -> bool{
-    let num_matches = info.password.matches(info.letter).count();
-    num_matches >= info.min_num  && num_matches <= info.max_num
-}
-
-fn is_valid_password_2(info : &PasswordEntry) -> bool {
-    let c = info.letter;
-
-    let min_match : bool = info.password.chars().nth(info.min_num - 1).unwrap() == c;
-    let max_match : bool= info.password.chars().nth(info.max_num - 1).unwrap() == c;
-
-    min_match ^ max_match
-}
-
-
- pub fn day_1_solve()
+/// Pairs algorithm:
+/// For each number in your list, have the key of a map entry be the number and
+/// have the value be "2020 - key".
+///
+/// Part 1: Then, once you create the map, simply iterate through all the map's
+/// entries. For each key, if the value is also a key in the map, you have found
+/// the solution.
+///
+/// Part 2: Create a hash map for each element, e, in your index. Then, run the
+/// pairs algorithm to see if there are two numbers, a and b that add to (2020 -
+/// e) If (a + b == 2020 - e), then (a + b + e == 2020), giving us our solution.
+fn create_map(nums : &[i32], target : i32) -> HashMap<i64, i64>
 {
-    let info : Vec<PasswordEntry> = file_to_text("src/day_1.txt".to_string());
-    let iter = info.iter();
-    let iter_2 = iter.clone();
+    let mut map : HashMap<i64, i64> = HashMap::new();
+    for n in nums {
+        if n >= &target {
+            continue;
+        }
+        map.insert(i64::from(*n) , (target-n).into());
+    }
+    map
+}
 
-    let valid_1 = iter.filter( |x| is_valid_password_1(x)).count() ;
-    let valid_2 = iter_2.filter( |x| is_valid_password_2(x)).count();
+/// Day 1:
+/// Part 1: 989824
+/// Part 2: 66432240
+pub fn day_0_solve()
+{
+    let nums = file_to_vec("src/day_0_input.txt");
+    let sum_map = create_map(&nums, 2020);
 
-    println!("Count - 1: {}", valid_1);
-    println!("Count - 2: {}", valid_2);
+    // // Part 1.
+    // for (num, result) in &sum_map {
+    //     if sum_map.get(result).is_some() {
+    //         println!("(Day 1 - Silver) Found value! {} * {} = {}", num, result, num * result);
+    //         break;
+
+    //     }
+    // }
+
+    // Part 2.
+    for inner in &nums {
+        if inner >= &2020 {
+            continue;
+        }
+
+        let inner_sum_map = create_map(&nums, 2020 - inner);
+        for (lhs, rhs) in &inner_sum_map {
+            if sum_map.get(rhs).is_some() {
+                println!("(Day 1 - Gold) Found value {} * {} * {} = {}",
+                         inner, lhs, rhs, i64::from(*inner) * rhs * lhs);
+                return;
+            }
+        }
+    }
 }
