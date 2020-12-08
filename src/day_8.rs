@@ -14,13 +14,11 @@ struct Instruction {
     argument: i64
 }
 
-struct Interpreter<'a> {
+pub struct Interpreter {
     instruction_ptr : i64,
-    instructions: &'a mut Vec<Instruction>,
+    instructions: Vec<Instruction>,
     register: i64
 }
-
-
 
 fn dispatch_instruction(console: &mut Interpreter) {
     let instr: &mut Instruction = &mut console.instructions[console.instruction_ptr as usize];
@@ -28,7 +26,7 @@ fn dispatch_instruction(console: &mut Interpreter) {
         InstructionType::NOP => {
             console.instruction_ptr += 1; // Next instruction.
         },
-        InstructionType::JUMP => {
+       InstructionType::JUMP => {
             console.instruction_ptr += instr.argument;
         },
         InstructionType::ACC => {
@@ -106,33 +104,36 @@ fn reset_interpreter(console: &mut Interpreter) {
 }
 
 fn run_2(console: &mut Interpreter) {
+    reset_interpreter(console);
+
     // For each instruction, if it's a jump, change to a nop and see if it
     // terminates. If it's a nop, change to a jump and see if it terminates.
-    let n_iter = console.instructions.len();
-    let mut seen_instrs : History = vec![false; console.instructions.len()];
+    let n_instructions = console.instructions.len();
+    let mut seen_instrs : History = vec![false; n_instructions];
 
     // Write history into vector. Though it's an extra loop before any useful
     // work is done, it tells us which instructions we need to worry about,
     // saving time in the long run.
     run_write_history(console, &mut seen_instrs);
 
-    for i in 0 .. n_iter {
-        if !seen_instrs[i] {
+    for (i, viewed_instruction) in seen_instrs.iter().enumerate() {
+        if !viewed_instruction ||
+            console.instructions[i].i_type == InstructionType::ACC {
             continue;
         }
 
         reset_interpreter(console);
 
-        if console.instructions[i].i_type == InstructionType::ACC {
-            continue;
-        }
+        // Use blocks to limit the scope of this mutable borrow.
+        // Without this, we would have two borrows on a part of the "console"
+        // structure, which breaks Rust's reference rules.
         {
             let changed_instruction: &mut Instruction = &mut console.instructions[i];
             changed_instruction.i_type = modify_itype(&changed_instruction.i_type);
         }
+
         // Run and see if it terminates. 
-        let success = run(console);
-        if success {
+        if run(console) {
             break;
         }
 
@@ -144,21 +145,40 @@ fn run_2(console: &mut Interpreter) {
     }
 }
 
-pub fn day_8_soln() {
-    let vec : Vec<String> = file_to_vec("src/8_input.txt".to_owned()).unwrap();
+pub fn silver(game_console: &mut Interpreter) {
+    reset_interpreter(game_console);
+    run(game_console);
+}
+
+pub fn gold(game_console: &mut Interpreter) {
+    run_2(game_console);
+}
+
+pub fn setup() -> Interpreter {
+    let vec : Vec<String> = file_to_vec("src/8_input.txt").unwrap();
     let vec_iter = vec.iter();
-    let mut instructions: Vec<Instruction> = vec_iter.clone().map( |s| line_to_instruction(s)).collect();
+    let rhs = vec_iter.clone().map( |s| line_to_instruction(s)).collect();
 
-    let mut game_console: Interpreter = Interpreter {
-        instruction_ptr : 0,
+    Interpreter {
+        instruction_ptr: 0,
         register: 0,
-        instructions: &mut instructions
-    };
+        instructions: rhs
+    }
+}
 
-    // // Now, let's execute this bad boy.
-    // run(&mut game_console);
-    // println!("(Silver): Value of register: {}", game_console.register);
+pub fn day_8_soln_bench() {
+    let mut game_console = setup();
 
-    run_2(&mut game_console);
+    silver(&mut game_console);
+    gold(&mut game_console);
+}
+
+pub fn day_8_soln () {
+    let mut game_console = setup();
+
+    silver(&mut game_console);
+    println!("(Silver): Value of register: {}", game_console.register);
+
+    gold(&mut game_console);
     println!("(Gold): Value of register: {}", game_console.register);
 }
