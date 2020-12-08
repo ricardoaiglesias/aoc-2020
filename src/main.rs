@@ -2,7 +2,17 @@
 // mod day_1;
 mod helper;
 // mod day_2;
-mod day_4;
+// mod day_4;
+// mod day_5;
+//mod day_6;
+mod day_8;
+
+use std::time::{Instant};
+
 fn main() {
-    day_4::day_4_soln();
+    let start = Instant::now();
+    day_8::day_8_soln();
+    let duration = start.elapsed();
+
+    println!("Time Elapsed: {:?}", duration);
 }
