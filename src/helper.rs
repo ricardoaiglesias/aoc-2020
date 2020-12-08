@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 #[allow(dead_code)]
-pub fn file_to_vec(filepath : String) -> Option<Vec<String>> {
+pub fn file_to_vec(filepath : &str) -> Option<Vec<String>> {
     let mut result : Vec<String> = Vec::new();
 
     let reader = BufReader::new(File::open(filepath).unwrap());

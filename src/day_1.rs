@@ -44,9 +44,9 @@ fn create_map(nums : &[i32], target : i32) -> HashMap<i64, i64>
 /// Day 1:
 /// Part 1: 989824
 /// Part 2: 66432240
-pub fn day_0_solve()
+pub fn day_1_soln()
 {
-    let nums = file_to_vec("src/day_0_input.txt");
+    let nums = file_to_vec("src/1_input.txt");
     let sum_map = create_map(&nums, 2020);
 
     // // Part 1.

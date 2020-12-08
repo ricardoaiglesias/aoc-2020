@@ -57,26 +57,26 @@ macro_rules! map(
      };
 );
 
-fn is_valid_byr(s : &String) -> bool {
+fn is_valid_byr(s : &str) -> bool {
     let num_digits = s.len();
 
     let num : i64 = s.parse().unwrap();
     num >= 1920 && num <= 2002 && num_digits == 4
 }
 
-fn is_valid_iyr(s : &String) -> bool {
+fn is_valid_iyr(s : &str) -> bool {
     let num_digits = s.len();
     let num : i64 = s.parse().unwrap();
     num >= 2010 && num <= 2020 && num_digits == 4
 }
 
-fn is_valid_eyr(s : &String) -> bool {
+fn is_valid_eyr(s : &str) -> bool {
     let num_digits = s.len();
     let num : i64 = s.parse().unwrap();
     num >= 2020 && num <= 2030 && num_digits == 4
 }
 
-fn is_valid_hgt(s: &String) -> bool {
+fn is_valid_hgt(s: &str) -> bool {
     // Try seeing if you can find 'cm'
     let found_cm = s.find("cm");
     let found_in = s.find("in");
@@ -105,7 +105,7 @@ fn is_valid_hgt(s: &String) -> bool {
     }
 }
 
-fn is_valid_hcl(s: &String) -> bool {
+fn is_valid_hcl(s: &str) -> bool {
     let num_digits = s.len();
     let hex_str : &str = &s[1..];
 
@@ -120,7 +120,7 @@ fn is_valid_hcl(s: &String) -> bool {
     num_digits == 7
 }
 
-fn is_valid_ecl(s: &String) -> bool {
+fn is_valid_ecl(s: &str) -> bool {
     let valid_colors = vec![
         "amb", "blu", "brn", "gry", "grn", "hzl", "oth"
     ];
@@ -133,7 +133,7 @@ fn is_valid_ecl(s: &String) -> bool {
     false
 }
 
-fn is_valid_pid(s : &String) -> bool {
+fn is_valid_pid(s : &str) -> bool {
     for c in s.chars() {
         if !(c >= '0' && c <= '9') {
             return false
@@ -142,9 +142,9 @@ fn is_valid_pid(s : &String) -> bool {
     s.len() == 9
 }
 
-fn is_valid_set_gold(kv_set: &Vec<(String, String)>) -> bool {
+fn is_valid_set_gold(kv_set: &[(String, String)]) -> bool {
 
-    let mut validity_criteria  =  HashMap::<String, fn (&String) -> bool>::new();
+    let mut validity_criteria  =  HashMap::<String, fn (&str) -> bool>::new();
     validity_criteria.insert("byr".to_string(), is_valid_byr);
     validity_criteria.insert("iyr".to_string(), is_valid_iyr);
     validity_criteria.insert("eyr".to_string(), is_valid_eyr);
@@ -168,7 +168,7 @@ fn is_valid_set_gold(kv_set: &Vec<(String, String)>) -> bool {
     is_valid_kv_set(kv_set)
 }
 
-fn is_valid_kv_set(kv_set : &Vec<(String, String)>) -> bool {
+fn is_valid_kv_set(kv_set : &[(String, String)]) -> bool {
     let mut required_keys_map : HashMap<String, bool> =
         map! {
             "byr".to_owned() => false,

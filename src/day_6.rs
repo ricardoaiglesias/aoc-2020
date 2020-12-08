@@ -45,12 +45,9 @@ fn silver()
 
 }
 
-pub fn day_6_soln() {
+fn gold()
+{
     let file_str = fs::read_to_string("./src/6_input.txt").unwrap();
-
-    // Part 2 (Struggling with Lifetimes).
-    //let file_str = fs::read_to_string("./src/6_test.txt").unwrap();
-
     let mut total_answered = 0;
     for group in file_str.split("\n\n") {
         let mut group_answers : HashSet<char> = HashSet::new();
@@ -79,4 +76,10 @@ pub fn day_6_soln() {
         total_answered += group_answers.iter().count();
     }
     println!("(Gold) Answer: {}", total_answered);
+    
+}
+
+pub fn day_6_soln() {
+    silver();
+    gold();
 }

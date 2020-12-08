@@ -1,6 +1,6 @@
 use crate::helper::file_to_vec;
 
-fn line_to_chars(line : &String) -> Vec<char>
+fn line_to_chars(line : &str) -> Vec<char>
 {
     let mut result : Vec<char> = Vec::new();
     for c in line.chars() {
@@ -41,9 +41,10 @@ fn get_trees_from_slope(dx: usize, dy : usize, grid : &[Vec<char>])  -> usize{
     num_trees
 }
 
-pub fn day_2_solve() -> Option<()>
+
+pub fn day_3_soln() -> Option<()>
 {
-    let lines : Vec<String> = file_to_vec("src/day_2.txt".to_owned())?;
+    let lines : Vec<String> = file_to_vec("src/3_input.txt")?;
     let grid : Vec<Vec<char>> = lines.iter().map( |l| line_to_chars(l) ).collect();
 
     let part_1 = get_trees_from_slope(3, 1, &grid);

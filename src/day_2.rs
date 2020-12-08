@@ -1,4 +1,5 @@
-use std::io::{BufReader};
+use std::io::{BufReader, BufRead};
+use std::fs::File;
 
 struct PasswordEntry {
     min_num : usize,
@@ -52,9 +53,9 @@ fn is_valid_password_2(info : &PasswordEntry) -> bool {
 }
 
 
-pub fn day_1_solve()
+pub fn day_2_soln()
 {
-    let info : Vec<PasswordEntry> = file_to_text("src/day_1.txt".to_string());
+    let info : Vec<PasswordEntry> = file_to_text("src/2_input.txt".to_string());
     let iter = info.iter();
     let iter_2 = iter.clone();
 

@@ -57,7 +57,7 @@ fn str_to_rule(s : &str) -> (Bag, Vec<Rule>) {
 
 
 /// SILVER SOLUTION
-fn can_hold_bag(rules : &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag : &Bag)
+fn can_hold_bag(rules : &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag : &str)
                 -> bool {
     if memo.contains_key(curr_bag) {
         return *memo.get(curr_bag).unwrap();
@@ -85,7 +85,7 @@ fn can_hold_bag(rules : &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag : &Bag
 }
 
 /// GOLD SOLUTION
-fn get_num_inner_bags(curr_bag : &Bag, ruleset : &RuleSet) -> usize {
+fn get_num_inner_bags(curr_bag : &str, ruleset : &RuleSet) -> usize {
     let rhs : &Vec<Rule> = ruleset.get(curr_bag).unwrap();
     if rhs.is_empty() {
         return 1;
@@ -107,7 +107,7 @@ fn build_ruleset(rule_vec : &[(Bag, Vec<Rule>)]) -> HashMap<Bag, &Vec<Rule>>{
 }
 
 pub fn day_7_soln() {
-    let str_vec = file_to_vec("src/7_input.txt".to_owned()).unwrap();
+    let str_vec = file_to_vec("src/7_input.txt").unwrap();
     let rule_vec : Vec<(Bag, Vec<Rule>)> = str_vec.iter().map(|s| str_to_rule(s)).collect();
 
     let ruleset = build_ruleset(&rule_vec);
@@ -116,6 +116,6 @@ pub fn day_7_soln() {
     let n_able: usize = rule_vec.iter().filter(|x| can_hold_bag(&ruleset, &mut memo, &x.0)).count();
     println!("Silver {}", n_able);
 
-    /// GOLD
+    // GOLD
     println!("Gold: {} ", get_num_inner_bags(&"shiny gold".to_owned(), &ruleset) -1 );
 }

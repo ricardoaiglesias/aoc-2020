@@ -52,7 +52,7 @@ fn pass_to_seat(boarding_pass : &str) -> Seat {
 fn seat_to_id(s : &Seat ) -> usize { s.row * 8 + s.col }
 
 pub fn day_5_soln() {
-    let vec : Vec<String> = file_to_vec("./src/5_input.txt".to_owned()).unwrap();
+    let vec : Vec<String> = file_to_vec("./src/5_input.txt").unwrap();
 
     let seat_vec : Vec<Seat> = vec.iter().map(|pass| pass_to_seat(pass)).collect();
     let mut id_vec : Vec<usize>= seat_vec.iter().map(|s| seat_to_id(s)).collect();
