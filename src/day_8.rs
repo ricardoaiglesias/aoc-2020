@@ -1,4 +1,4 @@
-use crate::helper::file_to_vec;
+use crate::helper::file_to_vec_transform;
 
 type History = Vec<bool>;
 
@@ -75,7 +75,10 @@ fn run(console: &mut Interpreter) -> bool {
     while !has_run_instruction(&seen_instructions, console.instruction_ptr) {
         seen_instructions[console.instruction_ptr as usize] = true;
         dispatch_instruction(console);
-        if console.instructions.len() == console.instruction_ptr as usize { return true; }
+
+        if console.instructions.len() == console.instruction_ptr as usize {
+            return true;
+        }
     }
     false
 }
@@ -155,9 +158,7 @@ pub fn gold(game_console: &mut Interpreter) {
 }
 
 pub fn setup() -> Interpreter {
-    let vec : Vec<String> = file_to_vec("src/8_input.txt").unwrap();
-    let vec_iter = vec.iter();
-    let rhs = vec_iter.clone().map( |s| line_to_instruction(s)).collect();
+    let rhs = file_to_vec_transform("src/8_input.txt", line_to_instruction);
 
     Interpreter {
         instruction_ptr: 0,
@@ -177,8 +178,8 @@ pub fn day_8_soln () {
     let mut game_console = setup();
 
     silver(&mut game_console);
-    println!("(Silver): Value of register: {}", game_console.register);
+    // println!("(Silver): Value of register: {}", game_console.register);
 
     gold(&mut game_console);
-    println!("(Gold): Value of register: {}", game_console.register);
+    // println!("(Gold): Value of register: {}", game_console.register);
 }
