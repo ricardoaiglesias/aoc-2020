@@ -39,9 +39,9 @@ criterion = "0.3"
 # name = "day_7_bench"
 # harness = false
 
-[[bench]]
-name = "day_8_bench"
-harness = false
+# [[bench]]
+# name = "day_8_bench"
+# harness = false
 
 # [[bench]]
 # name = "day_9_bench"
@@ -55,9 +55,9 @@ harness = false
 # name = "day_11_bench"
 # harness = false
 
-# [[bench]]
-# name = "day_12_bench"
-# harness = false
+[[bench]]
+name = "day_12_bench"
+harness = false
 
 # [[bench]]
 # name = "day_13_bench"

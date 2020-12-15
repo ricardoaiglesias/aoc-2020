@@ -95,7 +95,7 @@ pub fn gold(data: &mut XMasData) {
         if sum == invalid_number {
             let min = sum_vec.iter().min().unwrap();
             let max = sum_vec.iter().max().unwrap();
-            // println!("Gold: A winner is you! {} + {} = {}" , min, max, min + max);
+            println!("Gold: A winner is you! {} + {} = {}" , min, max, min + max);
         }
     }
 
@@ -195,6 +195,7 @@ pub fn gold_hash(data: &mut XMasData) {
         if sum == invalid_number {
             let min = sum_vec.iter().min().unwrap();
             let max = sum_vec.iter().max().unwrap();
+            println!("Min/Max: {:?}", (min, max));
         }
     }
 
