@@ -6,18 +6,18 @@ type History = Vec<bool>;
 enum InstructionType {
     NOP,
     ACC,
-    JUMP
+    JUMP,
 }
 
 struct Instruction {
     i_type: InstructionType,
-    argument: i64
+    argument: i64,
 }
 
 pub struct Interpreter {
-    instruction_ptr : i64,
+    instruction_ptr: i64,
     instructions: Vec<Instruction>,
-    register: i64
+    register: i64,
 }
 
 fn dispatch_instruction(console: &mut Interpreter) {
@@ -25,10 +25,10 @@ fn dispatch_instruction(console: &mut Interpreter) {
     match instr.i_type {
         InstructionType::NOP => {
             console.instruction_ptr += 1; // Next instruction.
-        },
-       InstructionType::JUMP => {
+        }
+        InstructionType::JUMP => {
             console.instruction_ptr += instr.argument;
-        },
+        }
         InstructionType::ACC => {
             console.register += instr.argument;
             console.instruction_ptr += 1;
@@ -36,36 +36,36 @@ fn dispatch_instruction(console: &mut Interpreter) {
     };
 }
 
-fn has_run_instruction(seen_instructions: &[bool], instr_ptr: i64)
-                       -> bool {
+fn has_run_instruction(seen_instructions: &[bool], instr_ptr: i64) -> bool {
     seen_instructions[instr_ptr as usize]
 }
 
 fn line_to_instruction(s: &str) -> Instruction {
     let split_loc = s.find(' ').unwrap();
-    let instruction : &str = &s[0..split_loc];
+    let instruction: &str = &s[0..split_loc];
 
-    let arg_value : i64 = s[split_loc+1..].parse().unwrap();
+    let arg_value: i64 = s[split_loc + 1..].parse().unwrap();
 
     match instruction {
         "jmp" => Instruction {
-            i_type : InstructionType::JUMP,
-            argument: arg_value
+            i_type: InstructionType::JUMP,
+            argument: arg_value,
         },
         "nop" => Instruction {
-            i_type : InstructionType::NOP,
-            argument: arg_value
+            i_type: InstructionType::NOP,
+            argument: arg_value,
         },
         "acc" => Instruction {
-            i_type : InstructionType::ACC,
-            argument: arg_value
+            i_type: InstructionType::ACC,
+            argument: arg_value,
         },
         _ => {
             println!("AGHF UCK! SOMETHING WENT WRONG.");
             Instruction {
-            i_type : InstructionType::NOP,
-            argument: arg_value
-        }},
+                i_type: InstructionType::NOP,
+                argument: arg_value,
+            }
+        }
     }
 }
 
@@ -88,22 +88,24 @@ fn run_write_history(console: &mut Interpreter, executed_instrs: &mut History) -
         executed_instrs[console.instruction_ptr as usize] = true;
 
         dispatch_instruction(console);
-        if console.instructions.len() == console.instruction_ptr as usize { return true; }
+        if console.instructions.len() == console.instruction_ptr as usize {
+            return true;
+        }
     }
     false
 }
 
-fn modify_itype(itype : &InstructionType) -> InstructionType{
+fn modify_itype(itype: &InstructionType) -> InstructionType {
     match itype {
         InstructionType::JUMP => InstructionType::NOP,
         InstructionType::NOP => InstructionType::JUMP,
-        _ => InstructionType::ACC
+        _ => InstructionType::ACC,
     }
 }
 
 fn reset_interpreter(console: &mut Interpreter) {
     console.instruction_ptr = 0;
-    console.register =  0;
+    console.register = 0;
 }
 
 fn run_2(console: &mut Interpreter) {
@@ -112,7 +114,7 @@ fn run_2(console: &mut Interpreter) {
     // For each instruction, if it's a jump, change to a nop and see if it
     // terminates. If it's a nop, change to a jump and see if it terminates.
     let n_instructions = console.instructions.len();
-    let mut seen_instrs : History = vec![false; n_instructions];
+    let mut seen_instrs: History = vec![false; n_instructions];
 
     // Write history into vector. Though it's an extra loop before any useful
     // work is done, it tells us which instructions we need to worry about,
@@ -120,8 +122,7 @@ fn run_2(console: &mut Interpreter) {
     run_write_history(console, &mut seen_instrs);
 
     for (i, viewed_instruction) in seen_instrs.iter().enumerate() {
-        if !viewed_instruction ||
-            console.instructions[i].i_type == InstructionType::ACC {
+        if !viewed_instruction || console.instructions[i].i_type == InstructionType::ACC {
             continue;
         }
 
@@ -135,7 +136,7 @@ fn run_2(console: &mut Interpreter) {
             changed_instruction.i_type = modify_itype(&changed_instruction.i_type);
         }
 
-        // Run and see if it terminates. 
+        // Run and see if it terminates.
         if run(console) {
             break;
         }
@@ -163,7 +164,7 @@ pub fn setup() -> Interpreter {
     Interpreter {
         instruction_ptr: 0,
         register: 0,
-        instructions: rhs
+        instructions: rhs,
     }
 }
 
@@ -174,7 +175,7 @@ pub fn day_8_soln_bench() {
     gold(&mut game_console);
 }
 
-pub fn day_8_soln () {
+pub fn day_8_soln() {
     let mut game_console = setup();
 
     silver(&mut game_console);

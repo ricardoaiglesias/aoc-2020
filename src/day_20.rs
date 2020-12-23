@@ -1,8 +1,7 @@
-pub fn silver(){ }
+pub fn silver() {}
 
-pub fn gold() {  }
+pub fn gold() {}
 
-pub fn setup(){  }
+pub fn setup() {}
 
-pub fn day_20_soln() {
-}
+pub fn day_20_soln() {}

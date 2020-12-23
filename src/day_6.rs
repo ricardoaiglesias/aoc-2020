@@ -1,20 +1,20 @@
 use std::collections::HashSet;
 use std::fs;
 
-fn line_to_answers_1(s : &str, chars_so_far : &mut HashSet<char>){
+fn line_to_answers_1(s: &str, chars_so_far: &mut HashSet<char>) {
     for c in s.chars() {
         chars_so_far.insert(c);
     }
 }
 
-fn line_to_answers_2(s : &str, chars_so_far : &HashSet<char>) -> HashSet<char>{
-    let mut curr_set : HashSet<char> = HashSet::new();
+fn line_to_answers_2(s: &str, chars_so_far: &HashSet<char>) -> HashSet<char> {
+    let mut curr_set: HashSet<char> = HashSet::new();
     for c in s.chars() {
         curr_set.insert(c);
     }
-    let inter : HashSet<&char> = chars_so_far.intersection(&curr_set).collect();
+    let inter: HashSet<&char> = chars_so_far.intersection(&curr_set).collect();
 
-    let mut return_set : HashSet<char> = HashSet::new();
+    let mut return_set: HashSet<char> = HashSet::new();
     for c in inter {
         return_set.insert(*c);
     }
@@ -22,19 +22,17 @@ fn line_to_answers_2(s : &str, chars_so_far : &HashSet<char>) -> HashSet<char>{
     return_set
 }
 
-
-fn silver()
-{
+fn silver() {
     let file_str = fs::read_to_string("./src/6_test.txt").unwrap();
 
     let groups = file_str.split("\n\n");
 
-    let mut total_answered : usize = 0;
+    let mut total_answered: usize = 0;
     for group in groups {
-        let mut group_answers : HashSet<char> = HashSet::new();
+        let mut group_answers: HashSet<char> = HashSet::new();
         let group_line = String::from(group);
 
-        for line in  group_line.split('\n') {
+        for line in group_line.split('\n') {
             line_to_answers_1(line, &mut group_answers);
         }
 
@@ -42,15 +40,13 @@ fn silver()
         total_answered += group_answers.iter().count();
     }
     println!("(Silver) Answer: {}", total_answered);
-
 }
 
-fn gold()
-{
+fn gold() {
     let file_str = fs::read_to_string("./src/6_input.txt").unwrap();
     let mut total_answered = 0;
     for group in file_str.split("\n\n") {
-        let mut group_answers : HashSet<char> = HashSet::new();
+        let mut group_answers: HashSet<char> = HashSet::new();
 
         let group_line = String::from(group);
         let n_chars = group_line.chars().count();
@@ -64,7 +60,8 @@ fn gold()
 
         println!("Size Before: {}", group_answers.iter().count());
         for line in group_line.split('\n') {
-            if line.chars().count() == 0 { // Literally just fuck my shit up.
+            if line.chars().count() == 0 {
+                // Literally just fuck my shit up.
                 continue;
             }
 
@@ -76,7 +73,6 @@ fn gold()
         total_answered += group_answers.iter().count();
     }
     println!("(Gold) Answer: {}", total_answered);
-    
 }
 
 pub fn day_6_soln() {

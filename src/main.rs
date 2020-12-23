@@ -1,3 +1,3 @@
 fn main() {
-    aoc_2020::day_14::day_14_soln();
+    aoc_2020::day_18::day_18_soln();
 }

@@ -1,14 +1,16 @@
 use crate::helper::file_to_vec_transform;
 
 pub struct JoltAdapter {
-    jolt_diffs: [usize; 3]
+    jolt_diffs: [usize; 3],
 }
 
-pub fn silver(data: &[usize], adapter_info: &mut JoltAdapter ) {
+pub fn silver(data: &[usize], adapter_info: &mut JoltAdapter) {
     println!("Data: {:?}", data);
 
     for (i, elem) in data.iter().enumerate() {
-        if i == data.len() - 1 { break; }
+        if i == data.len() - 1 {
+            break;
+        }
 
         let next = data[i + 1];
         adapter_info.jolt_diffs[next - elem - 1] += 1;
@@ -17,13 +19,15 @@ pub fn silver(data: &[usize], adapter_info: &mut JoltAdapter ) {
     let jolt_1 = adapter_info.jolt_diffs[0];
     let jolt_3 = adapter_info.jolt_diffs[2] + 1;
 
-    println!("1-Jolt Diffs: {} | 3-Jolt Diffs: {}. Result: {}",
-             jolt_1, jolt_3, jolt_1 * jolt_3);
+    println!(
+        "1-Jolt Diffs: {} | 3-Jolt Diffs: {}. Result: {}",
+        jolt_1,
+        jolt_3,
+        jolt_1 * jolt_3
+    );
 }
 
-fn gold_helper(data: &[usize], index: usize, end: usize,
-               memo : &mut [Option<usize>]) -> usize {
-
+fn gold_helper(data: &[usize], index: usize, end: usize, memo: &mut [Option<usize>]) -> usize {
     if memo[index].is_some() {
         return memo[index].unwrap();
     }
@@ -35,7 +39,7 @@ fn gold_helper(data: &[usize], index: usize, end: usize,
     // Otherwise, check the next three indices and recurse.
     let mut result = 0;
     let curr_value = data[index];
-    for next_ind in index+1..=index+3 {
+    for next_ind in index + 1..=index + 3 {
         if next_ind >= data.len() {
             break;
         }
@@ -56,9 +60,8 @@ pub fn gold(data: &[usize]) {
     println!("(Gold) Result: {}", result);
 }
 
-pub fn setup() -> Vec<usize>{
-    let mut data : Vec<usize> = file_to_vec_transform(
-        "src/10_input.txt", |x| x.parse().unwrap());
+pub fn setup() -> Vec<usize> {
+    let mut data: Vec<usize> = file_to_vec_transform("src/10_input.txt", |x| x.parse().unwrap());
     data.push(0);
     data.sort();
     data
@@ -66,9 +69,7 @@ pub fn setup() -> Vec<usize>{
 pub fn day_10_soln() {
     let data = setup();
 
-    let mut ja : JoltAdapter = JoltAdapter{
-        jolt_diffs: [0; 3]
-    };
+    let mut ja: JoltAdapter = JoltAdapter { jolt_diffs: [0; 3] };
     silver(&data, &mut ja);
     println!("Starting gold...");
     gold(&data);

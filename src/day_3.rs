@@ -1,8 +1,7 @@
 use crate::helper::file_to_vec;
 
-fn line_to_chars(line : &str) -> Vec<char>
-{
-    let mut result : Vec<char> = Vec::new();
+fn line_to_chars(line: &str) -> Vec<char> {
+    let mut result: Vec<char> = Vec::new();
     for c in line.chars() {
         result.push(c);
     }
@@ -10,27 +9,27 @@ fn line_to_chars(line : &str) -> Vec<char>
 }
 
 struct ToboganPos {
-    x : usize, y : usize
+    x: usize,
+    y: usize,
 }
 
-fn is_tree(grid : &[Vec<char>], pos : &ToboganPos)  -> bool{
+fn is_tree(grid: &[Vec<char>], pos: &ToboganPos) -> bool {
     grid[pos.y][pos.x] == '#'
 }
 
-fn move_tobogan(pos : ToboganPos, dx : usize, dy : usize, n_cols : usize) -> ToboganPos{
+fn move_tobogan(pos: ToboganPos, dx: usize, dy: usize, n_cols: usize) -> ToboganPos {
     ToboganPos {
-        x : (pos.x + dx) % n_cols,
-        y : pos.y + dy
+        x: (pos.x + dx) % n_cols,
+        y: pos.y + dy,
     }
 }
 
-fn get_trees_from_slope(dx: usize, dy : usize, grid : &[Vec<char>])  -> usize{
-    let mut curr_pos : ToboganPos = ToboganPos { x : 0, y : 0 };
+fn get_trees_from_slope(dx: usize, dy: usize, grid: &[Vec<char>]) -> usize {
+    let mut curr_pos: ToboganPos = ToboganPos { x: 0, y: 0 };
     let mut num_trees = 0;
 
     let n_lines = grid.len();
     let n_cols = grid[0].len();
-
 
     while curr_pos.y < n_lines {
         if is_tree(&grid, &curr_pos) {
@@ -41,20 +40,18 @@ fn get_trees_from_slope(dx: usize, dy : usize, grid : &[Vec<char>])  -> usize{
     num_trees
 }
 
-
-pub fn day_3_soln() -> Option<()>
-{
-    let lines : Vec<String> = file_to_vec("src/3_input.txt")?;
-    let grid : Vec<Vec<char>> = lines.iter().map( |l| line_to_chars(l) ).collect();
+pub fn day_3_soln() -> Option<()> {
+    let lines: Vec<String> = file_to_vec("src/3_input.txt")?;
+    let grid: Vec<Vec<char>> = lines.iter().map(|l| line_to_chars(l)).collect();
 
     let part_1 = get_trees_from_slope(3, 1, &grid);
 
     // Part 2: Use part 1's solution, but map + filter.
-    let slopes : Vec<(usize, usize)> = vec![ (1, 1), (3, 1), (5, 1), (7, 1), (1, 2) ];
-    let part_2 : usize =
-        slopes.iter()
-              .map( |pair| get_trees_from_slope(pair.0, pair.1, &grid) )
-              .product();
+    let slopes: Vec<(usize, usize)> = vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)];
+    let part_2: usize = slopes
+        .iter()
+        .map(|pair| get_trees_from_slope(pair.0, pair.1, &grid))
+        .product();
 
     println!("(Silver) Num Trees hit: {}", part_1);
     println!("(Gold) Num Trees hit: {}", part_2);

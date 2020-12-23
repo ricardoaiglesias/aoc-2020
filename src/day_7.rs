@@ -1,15 +1,15 @@
-use std::collections::HashMap;
 use crate::helper::file_to_vec;
+use std::collections::HashMap;
 
 type Bag = String;
 struct Rule {
-    inner_bag : Bag,
-    n_bags : usize // Number of bags with color "inner_bag"
+    inner_bag: Bag,
+    n_bags: usize, // Number of bags with color "inner_bag"
 }
 
 type RuleSet<'a> = HashMap<Bag, &'a Vec<Rule>>;
 
-fn substr_to_rule(s : &str) -> Rule {
+fn substr_to_rule(s: &str) -> Rule {
     let start_index = if None == s.find(',') { 0 } else { 2 };
     println!("S: {}", &s[start_index..]);
 
@@ -17,31 +17,31 @@ fn substr_to_rule(s : &str) -> Rule {
     let num_index = space_seps.clone().next().unwrap().0 + start_index;
     let bag_index = space_seps.clone().nth(2).unwrap().0 + start_index;
 
-    let n_bags : usize = s[start_index..num_index].parse().unwrap();
+    let n_bags: usize = s[start_index..num_index].parse().unwrap();
     let bag_type = s[num_index + 1..bag_index].to_string();
 
     Rule {
-        inner_bag :  bag_type,
-        n_bags
+        inner_bag: bag_type,
+        n_bags,
     }
 }
 
-fn str_to_rule(s : &str) -> (Bag, Vec<Rule>) {
+fn str_to_rule(s: &str) -> (Bag, Vec<Rule>) {
     // By replacing the period with a comma, we simplify the parsing by a bit.
     let s_copy = s.replace(".", ",");
 
     let v: (usize, &str) = s.match_indices(' ').nth(1).unwrap();
-    let source_bag : &str = &s[0.. v.0];
+    let source_bag: &str = &s[0..v.0];
 
     if None != s.find("no other bags") {
-        return (source_bag.to_owned() , Vec::new())
+        return (source_bag.to_owned(), Vec::new());
     };
 
-    let mut rules : Vec<Rule> = Vec::new();
+    let mut rules: Vec<Rule> = Vec::new();
 
     let separator = "contain ";
     let dest_rule_start_ind = s.find(separator).unwrap() + separator.len();
-    let dest_rule_str : &str = &s_copy[dest_rule_start_ind..];
+    let dest_rule_str: &str = &s_copy[dest_rule_start_ind..];
 
     // Multiple rules.
     let mut prev_index = 0;
@@ -54,23 +54,20 @@ fn str_to_rule(s : &str) -> (Bag, Vec<Rule>) {
     (source_bag.to_owned(), rules)
 }
 
-
-
 /// SILVER SOLUTION
-fn can_hold_bag(rules : &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag : &str)
-                -> bool {
+fn can_hold_bag(rules: &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag: &str) -> bool {
     if memo.contains_key(curr_bag) {
         return *memo.get(curr_bag).unwrap();
     }
 
     // Otherwise, get the set of bags the current bag can hold and recursively
     // figure out whether we can hold the gold bag.
-    let curr_rule : &Vec<Rule> = rules.get(curr_bag).unwrap();
+    let curr_rule: &Vec<Rule> = rules.get(curr_bag).unwrap();
 
     for rule in curr_rule {
         // Base Case.
         if rule.inner_bag == "shiny gold" {
-            return true
+            return true;
         }
 
         // Recursive case.
@@ -85,21 +82,22 @@ fn can_hold_bag(rules : &RuleSet, memo: &mut HashMap<Bag, bool>, curr_bag : &str
 }
 
 /// GOLD SOLUTION
-fn get_num_inner_bags(curr_bag : &str, ruleset : &RuleSet) -> usize {
-    let rhs : &Vec<Rule> = ruleset.get(curr_bag).unwrap();
+fn get_num_inner_bags(curr_bag: &str, ruleset: &RuleSet) -> usize {
+    let rhs: &Vec<Rule> = ruleset.get(curr_bag).unwrap();
     if rhs.is_empty() {
         return 1;
     }
-    rhs.iter().fold(
-        1 /* Include this bag.*/, |sum, curr_rule : &Rule|
-        sum + /* Include child bags*/
-        (curr_rule.n_bags * get_num_inner_bags(&curr_rule.inner_bag, ruleset)))
+    rhs.iter()
+        .fold(1 /* Include this bag.*/, |sum, curr_rule: &Rule| {
+            sum + /* Include child bags*/
+        (curr_rule.n_bags * get_num_inner_bags(&curr_rule.inner_bag, ruleset))
+        })
 }
 
-fn build_ruleset(rule_vec : &[(Bag, Vec<Rule>)]) -> HashMap<Bag, &Vec<Rule>>{
-    let mut ruleset : HashMap<Bag, &Vec<Rule>> = HashMap::new();
+fn build_ruleset(rule_vec: &[(Bag, Vec<Rule>)]) -> HashMap<Bag, &Vec<Rule>> {
+    let mut ruleset: HashMap<Bag, &Vec<Rule>> = HashMap::new();
 
-    for rule in rule_vec{
+    for rule in rule_vec {
         ruleset.insert(rule.0.clone(), &rule.1);
     }
 
@@ -108,14 +106,20 @@ fn build_ruleset(rule_vec : &[(Bag, Vec<Rule>)]) -> HashMap<Bag, &Vec<Rule>>{
 
 pub fn day_7_soln() {
     let str_vec = file_to_vec("src/7_input.txt").unwrap();
-    let rule_vec : Vec<(Bag, Vec<Rule>)> = str_vec.iter().map(|s| str_to_rule(s)).collect();
+    let rule_vec: Vec<(Bag, Vec<Rule>)> = str_vec.iter().map(|s| str_to_rule(s)).collect();
 
     let ruleset = build_ruleset(&rule_vec);
-    let mut memo : HashMap<Bag, bool> = HashMap::new();
+    let mut memo: HashMap<Bag, bool> = HashMap::new();
 
-    let n_able: usize = rule_vec.iter().filter(|x| can_hold_bag(&ruleset, &mut memo, &x.0)).count();
+    let n_able: usize = rule_vec
+        .iter()
+        .filter(|x| can_hold_bag(&ruleset, &mut memo, &x.0))
+        .count();
     println!("Silver {}", n_able);
 
     // GOLD
-    println!("Gold: {} ", get_num_inner_bags(&"shiny gold".to_owned(), &ruleset) -1 );
+    println!(
+        "Gold: {} ",
+        get_num_inner_bags(&"shiny gold".to_owned(), &ruleset) - 1
+    );
 }
